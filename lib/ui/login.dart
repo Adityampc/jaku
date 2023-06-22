@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/service/login_service.dart';
+import 'package:jaku/ui/Admin/Home.dart' as AdminHome;
+import 'package:jaku/ui/Member/Home.dart' as MemberHome;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -125,7 +128,11 @@ class _LoginState extends State<Login> {
       );
       return showDialog(context: context, builder: (context) => alert);
     }
-
-    print("A");
+    bool? isAdmin = await UserInfo().getIsAdmin();
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                (isAdmin ?? false) ? AdminHome.Home() : MemberHome.Home()));
   }
 }
