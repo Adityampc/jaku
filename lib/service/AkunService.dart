@@ -15,4 +15,10 @@ class AkunService {
     List<User> users = data.map((e) => User.fromJson(e)).toList();
     return users;
   }
+
+  Future<User> hapus(id) async {
+    final Response response = await ApiClient().delete("users/$id");
+    User user = User.fromJson(response.data);
+    return user;
+  }
 }
