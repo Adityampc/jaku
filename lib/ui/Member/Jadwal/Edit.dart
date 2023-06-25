@@ -6,14 +6,15 @@ import 'package:jaku/service/JadwalService.dart';
 
 import 'package:jaku/model/jadwal.dart';
 
-class Add extends StatefulWidget {
-  const Add({super.key});
+class Edit extends StatefulWidget {
+  Edit({super.key, required this.jadwal});
+  Jadwal jadwal;
 
   @override
-  State<Add> createState() => _AddState();
+  State<Edit> createState() => _EditState();
 }
 
-class _AddState extends State<Add> {
+class _EditState extends State<Edit> {
   final _formKey = GlobalKey<FormState>();
   final _titleCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
@@ -28,6 +29,10 @@ class _AddState extends State<Add> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _titleCtrl.text = widget.jadwal.title;
+    _descriptionCtrl.text = widget.jadwal.description!;
+    _timeCtrl.text = format
+        .format(DateTime.fromMillisecondsSinceEpoch(widget.jadwal.datetime));
     _titleFocus = FocusNode();
     _descriptionFocus = FocusNode();
     _timeFocus = FocusNode();
@@ -36,7 +41,7 @@ class _AddState extends State<Add> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Tambah Jadwal")),
+      appBar: AppBar(title: const Text("Ubah Jadwal")),
       body: Container(
         child: Form(
           key: _formKey,
@@ -134,30 +139,27 @@ class _AddState extends State<Add> {
   Widget _tombolTambah() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      child: ElevatedButton(onPressed: doTambah, child: Text("Tambah")),
+      child: ElevatedButton(onPressed: doTambah, child: Text("Simpan")),
     );
   }
 
   void doTambah() async {
     if (!fieldOk()) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Menambahkan"),
+      content: Text("Menyimpan"),
     ));
-    String? uid = await UserInfo().getUserID();
-    Jadwal jadwal = Jadwal(
-        id: "",
-        userId: "user${uid}Id",
-        title: _titleCtrl.text,
-        description: _descriptionCtrl.text,
-        datetime: DateTime.parse(_timeCtrl.text).millisecondsSinceEpoch);
-    JadwalService().tambah(jadwal).then((value) {
+    widget.jadwal.title = _titleCtrl.text;
+    widget.jadwal.description = _descriptionCtrl.text;
+    widget.jadwal.datetime =
+        DateTime.parse(_timeCtrl.text).millisecondsSinceEpoch;
+    JadwalService().ubah(widget.jadwal).then((value) {
       setState(() {
         _titleCtrl.text = "";
         _descriptionCtrl.text = "";
         _timeCtrl.text = "";
       });
       AlertDialog alert = AlertDialog(
-        content: const Text("Berhasil menambahkan jadwal"),
+        content: const Text("Berhasil menyimpan jadwal"),
         actions: [
           ElevatedButton(
               onPressed: () {

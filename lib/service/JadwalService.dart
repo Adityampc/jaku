@@ -25,9 +25,10 @@ class JadwalService {
     return user;
   }
 
-  Future<Jadwal> ubah(jadwal) async {
+  Future<Jadwal> ubah(Jadwal jadwal) async {
+    String id = jadwal.id;
     final Response response =
-        await ApiClient().put("schedule/${jadwal['id']}", jadwal);
+        await ApiClient().put("schedule/${id}", jadwal.toJson());
     Jadwal j = Jadwal.fromJson(response.data);
     return j;
   }

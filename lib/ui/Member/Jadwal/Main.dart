@@ -3,6 +3,7 @@ import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/model/jadwal.dart';
 import 'package:jaku/service/JadwalService.dart';
 import 'package:jaku/ui/Member/Jadwal/Add.dart';
+import 'package:jaku/ui/Member/Jadwal/Edit.dart';
 import 'package:jaku/widget/item_jadwal.dart';
 
 class Main extends StatefulWidget {
@@ -68,7 +69,15 @@ class _MainState extends State<Main> {
                     child: Center(child: Text("Hapus"))),
               ),
               GestureDetector(
-                onTap: () => print("Ubah"),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Edit(
+                                jadwal: jadwal,
+                              )));
+                },
                 child: Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
