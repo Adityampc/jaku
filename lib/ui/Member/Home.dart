@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/ui/Login.dart';
+import 'package:jaku/ui/Member/Jadwal/Main.dart';
 import 'package:jaku/widget/item_kotak.dart';
 
 class Home extends StatefulWidget {
@@ -20,11 +21,12 @@ class _HomeState extends State<Home> {
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         children: [
           ItemKotak(
-              onTap: () => _logout(context),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Main())),
               itemTengah: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.key),
+                  Icon(Icons.calendar_month),
                   SizedBox(height: 10),
                   Text("Jadwal"),
                 ],
@@ -54,8 +56,7 @@ class _HomeState extends State<Home> {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const Login()),
-                  (Route<dynamic> route) => false
-                  );
+                  (Route<dynamic> route) => false);
             },
             child: const Text("Keluar")),
         ElevatedButton(

@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:jaku/model/user.dart';
-import 'package:jaku/service/AkunService.dart';
-import 'package:jaku/widget/item_akun.dart';
+import 'package:jaku/helpers/user_info.dart';
+import 'package:jaku/model/jadwal.dart';
+import 'package:jaku/service/JadwalService.dart';
+import 'package:jaku/ui/Member/Jadwal/Add.dart';
+import 'package:jaku/widget/item_jadwal.dart';
 
-class Akun extends StatefulWidget {
-  const Akun({super.key});
+class Main extends StatefulWidget {
+  const Main({super.key});
 
   @override
-  State<Akun> createState() => _AkunState();
+  State<Main> createState() => _MainState();
 }
 
-class _AkunState extends State<Akun> {
+class _MainState extends State<Main> {
   bool onUpdate = true;
-  List<User> users = [];
+  List<Jadwal> jadwals = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadAkun().then((u) {
+    loadJadwal().then((j) {
       setState(
         () {
-          users = u;
+          jadwals = j;
           onUpdate = false;
         },
       );
@@ -30,19 +32,20 @@ class _AkunState extends State<Akun> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Akun")),
+      appBar: AppBar(title: Text("Jadwal")),
       body: Container(
         padding: EdgeInsets.all(5),
         child: _body(context),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => print("ADD"),
-      //   child: Icon(Icons.add),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Add())),
+        child: Icon(Icons.add),
+      ),
     );
   }
 
-  void onVertClick(User user) {
+  void onVertClick(Jadwal jadwal) {
     AlertDialog alert = AlertDialog(
       content: Container(
         height: MediaQuery.of(context).size.height / 7,
@@ -52,7 +55,7 @@ class _AkunState extends State<Akun> {
             children: [
               GestureDetector(
                 onTap: () {
-                  hapusAkun(user);
+                  hapusJadwal(jadwal);
                   Navigator.pop(context);
                 },
                 child: Container(
@@ -64,17 +67,17 @@ class _AkunState extends State<Akun> {
                     padding: EdgeInsets.only(top: 5, bottom: 5),
                     child: Center(child: Text("Hapus"))),
               ),
-              // GestureDetector(
-              //   onTap: () => print("Ubah"),
-              //   child: Container(
-              //       width: MediaQuery.of(context).size.width,
-              //       decoration: BoxDecoration(
-              //           border:
-              //               Border(bottom: BorderSide(color: Colors.black))),
-              //       margin: EdgeInsets.only(top: 5, bottom: 5),
-              //       padding: EdgeInsets.only(top: 2, bottom: 2),
-              //       child: Center(child: Text("Ubah"))),
-              // ),
+              GestureDetector(
+                onTap: () => print("Ubah"),
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        border:
+                            Border(bottom: BorderSide(color: Colors.black))),
+                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                    padding: EdgeInsets.only(top: 2, bottom: 2),
+                    child: Center(child: Text("Ubah"))),
+              ),
             ]),
       ),
       actions: [
@@ -88,45 +91,46 @@ class _AkunState extends State<Akun> {
     showDialog(context: context, builder: (context) => alert);
   }
 
-  Future<List<User>> loadAkun() async {
-    List<User> users = await AkunService().listData({"isAdmin": false});
-    return users;
+  Future<List<Jadwal>> loadJadwal() async {
+    String? uid = await UserInfo().getUserID();
+    List<Jadwal> jadwals = await JadwalService().listData({"userId": uid});
+    return jadwals;
   }
 
-  void hapusAkun(User user) async {
+  void hapusJadwal(Jadwal jadwal) async {
     SnackBar snackOnDelete = SnackBar(
-      content: Text("Menghapus akun " + user.username),
+      content: Text("Menghapus jadwal " + jadwal.title),
       // behavior: SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackOnDelete);
-    AkunService().hapus(user.id).then((value) {
+    JadwalService().hapus(jadwal.id).then((value) {
       SnackBar snackOnSuccess = SnackBar(
-        content: Text("Berhasil menghapus akun " + value.username),
+        content: Text("Berhasil menghapus jadwal " + value.title),
         // behavior: SnackBarBehavior.floating,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackOnSuccess);
       setState(() {
-        users.remove(user);
+        jadwals.remove(jadwal);
       });
     });
   }
 
   Widget _body(context) {
-    if (onUpdate && users.isEmpty) {
+    if (onUpdate && jadwals.isEmpty) {
       return const Center(child: CircularProgressIndicator());
-    } else if (!onUpdate && users.isEmpty) {
+    } else if (!onUpdate && jadwals.isEmpty) {
       return const Center(
-        child: Text("Tidak ada akun!"),
+        child: Text("Tidak ada jadwal!"),
       );
     } else {
       return ListView.builder(
-          itemCount: users.length,
+          itemCount: jadwals.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            User user = users[index];
-            return ItemAkun(
-              user: user,
-              onVertClick: () => onVertClick(user),
+            Jadwal jadwal = jadwals[index];
+            return ItemJadwal(
+              jadwal: jadwal,
+              onVertClick: () => onVertClick(jadwal),
             );
           });
     }

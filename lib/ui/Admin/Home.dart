@@ -31,16 +31,16 @@ class _HomeState extends State<Home> {
                   Text("Akun"),
                 ],
               )),
-          ItemKotak(
-              onTap: () => _logout(context),
-              itemTengah: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.key),
-                  SizedBox(height: 10),
-                  Text("Password"),
-                ],
-              )),
+          // ItemKotak(
+          //     onTap: () => _logout(context),
+          //     itemTengah: const Column(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Icon(Icons.key),
+          //         SizedBox(height: 10),
+          //         Text("Password"),
+          //       ],
+          //     )),
           ItemKotak(
               onTap: () => _logout(context),
               itemTengah: const Column(

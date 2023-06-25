@@ -7,8 +7,9 @@ class AkunService {
   Future<List<User>> listData(opt) async {
     String url = 'users?';
     if (opt != null) {
-      if (opt["p"]) url = "$url&p=${opt['p']}";
-      if (opt["l"]) url = "$url&l=${opt['l']}";
+      if (opt["p"] != null) url = "$url&p=${opt['p']}";
+      if (opt["l"] != null) url = "$url&l=${opt['l']}";
+      if (opt["isAdmin"] != null) url = "$url&isAdmin=${opt['isAdmin']}";
     }
     final Response response = await ApiClient().get(url);
     final List data = response.data as List;

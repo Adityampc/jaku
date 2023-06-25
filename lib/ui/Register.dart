@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/service/AuthService.dart';
-import 'package:jaku/ui/Admin/Home.dart' as AdminHome;
 import 'package:jaku/ui/Login.dart';
-import 'package:jaku/ui/Member/Home.dart' as MemberHome;
 
 class Register extends StatefulWidget {
   const Register({super.key});

@@ -14,13 +14,15 @@ class User {
       this.password,
       this.isAdmin = false});
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
-      id: json["id"],
-      username: json["username"],
-      name: json["name"],
-      password: json["password"],
-      isAdmin: json["isAdmin"] == 1,
-      createdAt: json["createdAt"]);
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+        id: json["id"],
+        username: json["username"],
+        name: json["name"],
+        password: json["password"],
+        isAdmin: json["isAdmin"] == true,
+        createdAt: json["createdAt"]);
+  }
 
   Map<String, dynamic> toJson() => {
         "id": this.id,
