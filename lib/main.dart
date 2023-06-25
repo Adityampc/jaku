@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/ui/Admin/Home.dart' as HomeAdmin;
 import 'package:jaku/ui/Member/Home.dart' as HomeMember;
-import 'package:jaku/ui/login.dart';
+import 'package:jaku/ui/Login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var token = await UserInfo().getToken();
+  var uid = await UserInfo().getUserID();
   var isAdmin = await UserInfo().getIsAdmin();
   runApp(MaterialApp(
       title: 'Jadwal Ku',
       debugShowCheckedModeBanner: false,
-      home: token == null
+      home: uid == null
           ? const Login()
           : isAdmin == true
               ? const HomeAdmin.Home()

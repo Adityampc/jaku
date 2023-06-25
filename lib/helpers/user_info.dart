@@ -1,21 +1,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String TOKEN = "token";
 const String USERID = "userID";
 const String USERNAME = "username";
 const String ISADMIN = "isAdmin";
 
 class UserInfo {
-  Future setToken(String value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(TOKEN, value);
-  }
-
-  Future<String?> getToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(TOKEN);
-  }
-
   Future setUserID(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(USERID, value);

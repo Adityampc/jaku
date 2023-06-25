@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jaku/helpers/user_info.dart';
+import 'package:jaku/ui/Login.dart';
+import 'package:jaku/widget/item_kotak.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,9 +15,56 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Jadwal Ku")),
-      body: SingleChildScrollView(
-        child: Text("Member"),
+      body: GridView(
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+        children: [
+          ItemKotak(
+              onTap: () => _logout(context),
+              itemTengah: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.key),
+                  SizedBox(height: 10),
+                  Text("Jadwal"),
+                ],
+              )),
+          ItemKotak(
+              onTap: () => _logout(context),
+              itemTengah: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.logout),
+                  SizedBox(height: 10),
+                  Text("Keluar"),
+                ],
+              )),
+        ],
       ),
     );
+  }
+
+  void _logout(context) {
+    AlertDialog alert = AlertDialog(
+      content: const Text("Anda akan keluar dari akun?"),
+      actions: [
+        ElevatedButton(
+            onPressed: () async {
+              await UserInfo().logout();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (Route<dynamic> route) => false
+                  );
+            },
+            child: const Text("Keluar")),
+        ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Batal"))
+      ],
+    );
+    showDialog(context: context, builder: (context) => alert);
   }
 }

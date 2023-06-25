@@ -2,26 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/service/AuthService.dart';
 import 'package:jaku/ui/Admin/Home.dart' as AdminHome;
+import 'package:jaku/ui/Login.dart';
 import 'package:jaku/ui/Member/Home.dart' as MemberHome;
-import 'package:jaku/ui/register.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
+  final _nameCtrl = TextEditingController();
   final _usernameCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+  late FocusNode _nameFocus;
   late FocusNode _usernameFocus;
   late FocusNode _passwordFocus;
 
   @override
   void initState() {
     super.initState();
+    _nameFocus = FocusNode();
     _usernameFocus = FocusNode();
     _passwordFocus = FocusNode();
   }
@@ -39,7 +42,7 @@ class _LoginState extends State<Login> {
                   height: 20,
                 ),
                 Text(
-                  "Masuk untuk melanjutkan",
+                  "Daftar akun baru",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(height: 50),
@@ -50,6 +53,10 @@ class _LoginState extends State<Login> {
                       width: MediaQuery.of(context).size.width / 1.3,
                       child: Column(
                         children: [
+                          _nameTextField(),
+                          SizedBox(
+                            height: 20,
+                          ),
                           _usernameTextField(),
                           SizedBox(
                             height: 20,
@@ -58,11 +65,11 @@ class _LoginState extends State<Login> {
                           SizedBox(
                             height: 40,
                           ),
-                          _tombolLogin(),
+                          _tombolRegister(),
                           SizedBox(
                             height: 20,
                           ),
-                          _tombolRegister()
+                          _tombolLogin()
                         ],
                       ),
                     ),
@@ -74,9 +81,20 @@ class _LoginState extends State<Login> {
     ));
   }
 
+  Widget _nameTextField() {
+    return TextFormField(
+      onFieldSubmitted: (v) => doRegister(),
+      decoration: const InputDecoration(
+        label: Text("Nama"),
+      ),
+      focusNode: _nameFocus,
+      controller: _nameCtrl,
+    );
+  }
+
   Widget _usernameTextField() {
     return TextFormField(
-      onFieldSubmitted: (v) => doLogin(),
+      onFieldSubmitted: (v) => doRegister(),
       decoration: const InputDecoration(
         label: Text("Username"),
       ),
@@ -87,19 +105,12 @@ class _LoginState extends State<Login> {
 
   Widget _passwordTextField() {
     return TextFormField(
-      onFieldSubmitted: (v) => doLogin(),
+      onFieldSubmitted: (v) => doRegister(),
       decoration: const InputDecoration(
         label: Text("Password"),
       ),
       focusNode: _passwordFocus,
       controller: _passwordCtrl,
-    );
-  }
-
-  Widget _tombolLogin() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: ElevatedButton(onPressed: doLogin, child: Text("Masuk")),
     );
   }
 
@@ -110,7 +121,18 @@ class _LoginState extends State<Login> {
     );
   }
 
+  Widget _tombolLogin() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: ElevatedButton(onPressed: doLogin, child: Text("Masuk")),
+    );
+  }
+
   bool fieldOk() {
+    if (_nameCtrl.text == "") {
+      _nameFocus.requestFocus();
+      return false;
+    }
     if (_usernameCtrl.text == "") {
       _usernameFocus.requestFocus();
       return false;
@@ -122,42 +144,35 @@ class _LoginState extends State<Login> {
     return true;
   }
 
-  void doRegister() {
+  void doLogin() {
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const Register()),
+        MaterialPageRoute(builder: (context) => const Login()),
         (Route<dynamic> route) => false);
   }
 
-  void doLogin() async {
+  void doRegister() async {
     if (!fieldOk()) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Logging..."),
+      content: Text("Register..."),
     ));
 
+    String name = _nameCtrl.text;
     String username = _usernameCtrl.text;
     String password = _passwordCtrl.text;
-    bool isAuthenticated = await AuthService().login(username, password);
-    if (!isAuthenticated) {
-      AlertDialog alert = AlertDialog(
-        content: const Text("Username atau Password Tidak Valid"),
-        actions: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("OK"))
-        ],
-      );
-      return showDialog(context: context, builder: (context) => alert);
-    }
-    bool? isAdmin = await UserInfo().getIsAdmin();
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (context) => (isAdmin ?? false)
-                ? const AdminHome.Home()
-                : const MemberHome.Home()),
-        (Route<dynamic> route) => false);
+    bool isRegistered = await AuthService().register(name, username, password);
+    String txt = "Berhasil mendaftarkan akun";
+    if (!isRegistered) txt = "Gagal mendaftarkan akun";
+    AlertDialog alert = AlertDialog(
+      content: Text(txt),
+      actions: [
+        ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("OK"))
+      ],
+    );
+    return showDialog(context: context, builder: (context) => alert);
   }
 }

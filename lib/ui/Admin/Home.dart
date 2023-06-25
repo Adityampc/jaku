@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jaku/helpers/user_info.dart';
 import 'package:jaku/ui/Admin/Akun.dart';
-import 'package:jaku/ui/login.dart';
+import 'package:jaku/ui/Login.dart';
 import 'package:jaku/widget/item_kotak.dart';
 
 class Home extends StatefulWidget {
@@ -63,8 +63,10 @@ class _HomeState extends State<Home> {
         ElevatedButton(
             onPressed: () async {
               await UserInfo().logout();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const Login()));
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (Route<dynamic> route) => false);
             },
             child: const Text("Keluar")),
         ElevatedButton(
